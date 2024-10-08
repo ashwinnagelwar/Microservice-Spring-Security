@@ -1,0 +1,11 @@
+package com.userService.User.Service.entity;
+
+public class User {
+
+	private String userId;
+	private String userName;
+	private Long mobileNo;
+	private String gender;
+	private int	age;
+	private String address;
+}
