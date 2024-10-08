@@ -1,0 +1,5 @@
+package com.mobileService.repository;
+
+public interface MobileRepo {
+
+}
