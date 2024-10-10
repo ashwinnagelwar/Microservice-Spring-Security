@@ -7,4 +7,8 @@
 4. we have created mobile service with same configuration as user service.
 5. we have created Myorder service also updated with feign client dependency with user and mobile service wrt order service.
 6. used feign client to communicate with user and mobile service by myorder service to place mobile buy order by user and successfully implemented.
-   
+7. we have craeted spring cloud gateway with following dependency
+  <artifactId>spring-boot-starter-webflux</artifactId>
+  <artifactId>spring-cloud-starter-gateway</artifactId>
+  rtifactId>spring-boot-starter-actuator</artifactId>------->optional
+and then did some configurartion in gatway service yaml file, and tested successfully.
