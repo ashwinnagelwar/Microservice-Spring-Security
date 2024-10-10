@@ -33,4 +33,9 @@ public class MobileService {
 	{
 		return mobileRepo.findByPrice(price);
 	}
+	
+	public Mobile getMobileById(Integer id)
+	{
+		return mobileRepo.findById(id).get();
+	}
 }

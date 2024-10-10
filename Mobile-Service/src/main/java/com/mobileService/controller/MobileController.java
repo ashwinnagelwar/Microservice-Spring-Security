@@ -51,4 +51,11 @@ public class MobileController {
 		List<Mobile> allMobiles = mobileService.getMobileByPrice(price);
 		return new ResponseEntity<List<Mobile>>(allMobiles, HttpStatus.OK);
 	}
+	
+	@GetMapping("/getMobileById/{id}")
+	public ResponseEntity<Mobile> getMobileById(@PathVariable Integer id)
+	{
+		Mobile mobile = mobileService.getMobileById(id);
+		return new ResponseEntity<Mobile>(mobile, HttpStatus.OK);
+	}
 }
