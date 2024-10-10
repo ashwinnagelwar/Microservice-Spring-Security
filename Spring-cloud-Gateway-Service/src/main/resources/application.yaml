@@ -1,0 +1,39 @@
+server:
+  port: 8084 # Gateway will run on port 8084
+
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: Order-Service
+          uri: lb://ORDER-SERVICE  # lb:// means load-balancing through Eureka
+          predicates:
+            - Path=/order/**
+        - id: User-Service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user/**
+        - id: Mobile-Service
+          uri: lb://MOBILE-SERVICE
+          predicates:
+            - Path=/mobile/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/  # Eureka Server URL
+    register-with-eureka: true
+    fetch-registry: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+  
+
