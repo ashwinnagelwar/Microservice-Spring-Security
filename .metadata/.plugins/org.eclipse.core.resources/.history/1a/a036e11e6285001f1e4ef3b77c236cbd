@@ -1,9 +1,0 @@
-package com.mobileService.entity;
-
-import jakarta.persistence.Entity;
-
-@Entity
-@get
-public class Mobile {
-
-}

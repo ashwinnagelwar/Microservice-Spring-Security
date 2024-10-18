@@ -1,9 +1,0 @@
-package com.userService.User.Service.repository;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.userService.User.Service.entity.User;
-
-public interface UserServiceRepo extends JpaRepository<User, String>{
-
-}
