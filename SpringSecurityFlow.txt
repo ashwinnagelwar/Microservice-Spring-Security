@@ -1,2 +1,98 @@
 Spring Security with JWT Authentication in microservice
 
+1. We need to create One Authentication Service/server. This server will do registration of user by creating and saving username and password->encoded in database.
+2. After registration/signup, we will generate JWT token by passing username and password, to athentication server, it will check username and password from DB with the help of Authentication manager, which will call with the help of Authentication provider, and for corrrect credentials it will generate JWT token in response.
+3. We need to add following dependency to perform token creation and authentication of request.
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-api</artifactId>
+    <version>0.12.6</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl -->
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-impl</artifactId>
+    <version>0.12.6</version>
+    <scope>runtime</scope>
+</dependency>
+<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-jackson -->
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-jackson</artifactId>
+    <version>0.12.6</version>
+    <scope>runtime</scope>
+</dependency>
+<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+4. Signing Up New User:
+    Create signup/ api in authentication server to register user, while signing up password will be encode using PasswordEncoder and saved info in DB.
+5. Generating JWT Token for Registered USer:
+    We need to create second api to generate JWT token for given username and password
+    We need jjwt and spring security dependency for this.
+6. We create JWT service/Util class for same purpose to create jwt token using predefined jwt library implementation for, you can check methods in JwtService class in auth-service.
+7. We also need secret key, which we can get online from any website
+8. We define generateToken(), getSignKey() and createToken() method in JwtService calss, you can see detailed implementation.
+    we used getSignKey() method to provide encryption to secret Key using HS256 algorithm, you can change any alogorith as per requirement. and finally we generate token.
+9. As we used spring security, by default, its security is activated for every api, to by pass its swcurity to achieve our JWt authentication we need filters.
+    For Security filetr for spring security we have to define SecurityFilterChain() method in AuthenticationConfig class, also we define bean for 
+    1. UserDetailsService 2. PasswordEncoder 3. AuthenticationManager
+    In SecurityFilterChain() method, we permit all api and bypass from spring security which is by defualt activated.
+10. Now, the token generated for user is not authenticate as we have not athonticated user before generating token.
+    for this We need AuthenticationManager to authenticate username and password and then generate token.
+11. We defined bean in controller for Authentication Manger and called its authenticate() method and pass new Object       
+    UsernamePasswordAuthenticationToken(username,password) with suername and password argument.
+    and after getting authnetication object in return we checked if it is authenticated or not and then generate token.
+12. but to connect AuthenticationManager to DB, we need to implements Predefined Spring security UserDetailsService class and override its method 
+    loadUserByUsername().
+13. This loadUserByUsername() method returns UserDetaisl class, so we need to implements this UserDetails class from spring security by creating new 
+    CustomeUserDetaisl class and override its all methods.
+14. Set username and password of UserCredential class to this CustomeUserDetails class username and password in its argument constructor after getting response     
+    from loadUserByUsername method in CustomeUserDetailsService class.
+15. Now to call authentication manager, we need Authentication provider.We need to craete bean of Authentication provider in config class and in this 
+    authentication provider bean method, we have 1. setUserDetailsService() and 2. setPasswordEncoder() method
+16. Now to pass userDetailsService() and passwordEncoder() object to this method respectively we created bean for both in same config class.
+    In userDetailsService method we return CustomeUserDetailsService as its implements userDetailsService class.
+    and in  passwordEncoder method we return BCryptPasswordEncoder which type of PasswordEncoder.
+17. By passing this object in daoAuthenticationProvider methods we will execute loadUserByUsername() method from CustomeUserDetailsService which implements 
+    UserDetailsService class.
+18. Spring-Cloud-gateway
+    Now to route this request from gateway, we have to route request after getting token from Auth-server to gateway to appropriate service ex. user, mobile and 
+    order.
+     for this we need following dependency
+    <dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-api</artifactId>
+    <version>0.12.6</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl -->
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-impl</artifactId>
+    <version>0.12.6</version>
+    <scope>runtime</scope>
+</dependency>
+<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-jackson -->
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-jackson</artifactId>
+    <version>0.12.6</version>
+    <scope>runtime</scope>
+</dependency>
+<dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
+    </dependency>
+19. Because when any request comes to gateway with token, this token will be validating by gateway and if authenticated then only pass throgh perticular service.
+20. we need to do some predefined configuration.
+    we create class AuthenticationFilter which extends AbstractGatewayFilterFactory class and override its apply() method.
+    In this apply() method, every request with token will check here, that if request has token in its header or not and if yes then remove bearer part from token 
+    and pass to the JwtUtil class for validation, it will validate the token by decoding it.
+    Also in AuthenticationFilter classRouteValidator class will check this api is secured or not, if secured then token will be validated by JwtUtl class else 
+    request will directly pass to perticular api without validation. 
+21. FIlter in Spring Gateway
+    To followe this AuthenticationFiletr for every service request we configured Filters in gateway yaml file.
+
+
+  
