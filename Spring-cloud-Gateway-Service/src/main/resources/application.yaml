@@ -21,7 +21,10 @@ spring:
           uri: lb://MOBILE-SERVICE
           predicates:
             - Path=/mobile/**
-
+        - id: Authentication-Server
+          uri: lb://AUTHENTICATION-SERVER
+          predicates:
+            - Path=/auth-server/**
 eureka:
   client:
     service-url:
