@@ -15,6 +15,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 @Service
@@ -25,7 +26,9 @@ public class JwtService {
 	  
 	  private Key getSignKey() 
 	  {
-	        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
+		  byte[] keyBytes=Decoders.BASE64.decode(jwtSecret);
+	        return Keys.hmacShaKeyFor(keyBytes);
+//	        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
 	    }
 	  
 	  public String generateToken(UserCredential userCredential)
@@ -44,8 +47,9 @@ public class JwtService {
                 .and()
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 50)) // 5 minutes expiration time
-                .signWith(getSignKey())
-                .compact();
+                .signWith(getSignKey(),SignatureAlgorithm.HS256).compact();
+               //I have used this depricated as because in gateway, while decoding the size was not matching,
+		//so for temporary I have used depricated configuration for encoding and decoding secret key
 	  }
 	
 }
