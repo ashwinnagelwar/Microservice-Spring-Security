@@ -38,7 +38,7 @@ public class MobileController {
 		return new ResponseEntity<List<Mobile>>(allMobiles, HttpStatus.OK);
 	}
 	
-	@GetMapping(value = "/getMobileByRom", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+	@GetMapping(value = "/getMobileByRom", consumes = { MediaType.APPLICATION_JSON,MediaType.APPLICATION_ATOM_XML}, produces = MediaType.APPLICATION_JSON)
 	public ResponseEntity<List<Mobile>> getMobileByRom(@PathVariable String rom)
 	{
 		List<Mobile> allMobiles = mobileService.getMobileByRom(rom);
